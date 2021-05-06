@@ -1,0 +1,53 @@
+esphome:
+  name: desksville_fan
+  platform: ESP32
+  board: featheresp32
+  includes:
+    - ceilingfan.h
+
+wifi:
+  ssid: "Skynet"
+  password: "correcthorsebatterystaple"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Desksville Fallback Hotspot"
+    password: "fQE1IvnNF77F"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+switch:
+  - platform: gpio
+    pin: 13
+    id: light_toggle
+  - platform: template
+    name: "Desksville Fan Light"
+    turn_on_action:
+    - switch.turn_on: light_toggle
+    - delay: 500ms
+    - switch.turn_off: light_toggle
+
+output:
+  - platform: custom
+    type: float
+    outputs:
+      id: fanoutput
+    lambda: |-
+      auto ifan02_fan = new IFan02Output();
+      App.register_component(ifan02_fan);
+      return {ifan02_fan};
+
+fan:
+  - platform: speed
+    output: fanoutput
+    id: my_fan
+    name: "Desksville Fan"
+    speed_count: 3
