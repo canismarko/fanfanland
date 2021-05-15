@@ -4,6 +4,12 @@ esphome:
   board: featheresp32
   includes:
     - ceilingfan.h
+  on_boot:
+    priority: -150
+    then:
+    - lambda: |-
+        id(my_fan).make_call().set_speed(0.33);
+        
 
 wifi:
   ssid: "Skynet"
@@ -25,15 +31,71 @@ api:
 ota:
 
 switch:
+  # Toggle the light on and off
   - platform: gpio
-    pin: 13
-    id: light_toggle
+    pin: 12
+    id: toggle_light
   - platform: template
-    name: "Desksville Fan Light"
+    name: "Desksville Fan Light Toggle"
     turn_on_action:
-    - switch.turn_on: light_toggle
-    - delay: 500ms
-    - switch.turn_off: light_toggle
+    - switch.turn_on: toggle_light
+    - delay: 1.5s
+    - switch.turn_off: toggle_light
+
+  # Reverse the fan direction
+  # - platform: gpio
+  #   pin: 13
+  #   id: toggle_reverse
+  # - platform: template
+  #   name: "Desksville Fan Reverse"
+  #   turn_on_action:
+  #   - switch.turn_on: toggle_reverse
+  #   - delay: 500ms
+  #   - switch.turn_off: toggle_reverse
+
+  # Testing switches
+  # Turn the fan off
+  # - platform: gpio
+  #   pin: 27
+  #   id: toggle_off
+  # - platform: template
+  #   name: "Desksville Fan Off"
+  #   turn_on_action:
+  #   - switch.turn_on: toggle_off
+  #   - delay: 500ms
+  #   - switch.turn_off: toggle_off
+  # # Turn the fan to low
+  # - platform: gpio
+  #   pin: 15
+  #   name: "Fan testing low (15)"
+  #   id: toggle_low
+  # - platform: template
+  #   name: "Desksville Fan Low"
+  #   turn_on_action:
+  #   - switch.turn_on: toggle_low
+  #   - delay: 2s
+  #   - switch.turn_off: toggle_low
+  # # Turn the fan medium
+  # - platform: gpio
+  #   pin: 32
+  #   id: toggle_medium
+  # - platform: template
+  #   name: "Desksville Fan Medium"
+  #   turn_on_action:
+  #   - switch.turn_on: toggle_medium
+  #   - delay: 500ms
+  #   - switch.turn_off: toggle_medium
+  # # Turn the fan to high
+  # - platform: gpio
+  #   pin: 33
+  #   id: toggle_high
+  # - platform: template
+  #   name: "Desksville Fan High"
+  #   turn_on_action:
+  #   - switch.turn_on: toggle_high
+  #   - delay: 500ms
+  #   - switch.turn_off: toggle_high
+    
 
 output:
   - platform: custom
